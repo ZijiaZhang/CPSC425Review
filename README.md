@@ -174,6 +174,130 @@ Smoothing + Derivative
 - We can reconstruct the original image using the pyramid
 ## Boundary Detection
 IDK What is this
+## Harris Corner Detection
+1. Compute image gradients over small region
+2. Compute the covariance matrix
+3. Compute eigenvectors and eigenvalues
+4. Use threshold on eigenvalues to detect corners
+
+
+- Rotational Invariance
+- (Partial) Invariance to Intensity Shifts and Scaling
+- NOT Invariant to Scale Changes
+	- Find local maxima in both position and scale
+	- Highest response when the signal has the same characteristic scale as the filter
+### Characteristic Scale
+The scale that produces peak filter response
+# Chapter 6: Texture
+Texture is detail in an image that is at a scale too small to be resolved into its constituent elements and at a scale large enough to be apparent in the spatialdistribution of image measurements 
+## Texture Synthesis
+- Generate new examples of a texture.
+- Use an image of the texture as the source of a probability model
+### Efros and Leung: Synthesizing One Pixel
+- We sample the pixel with the conditional probability given the neighbourhood.
+	- Directly search the input image for all such neighbourhoods to produce a histogram
+	- Find the best match using SSD error, weighted by Gaussian to emphasize local structure, and take all samples within some distance from that match
+	- Grow from the edge to centre
+- A smaller window may not capture the structure pattern. Because the pattern might be larger than the window. (Smaller -> more randomness)
+### “Big Data” Meets Inpainting
+1. Create a short list of a few hundred “best matching” images based on global image statistics 
+2. Find patches in the short list that match the context surrounding the image region we want to fill 
+3. Blend the match into the original image 
+
+## Texture Segmentation
+Textures are made up of generic sub-elements, repeated over a region with similar statistical properties 
+
+- There are infinitely many degrees of freedom are there to texture
+- We represent textures in terms of the response of the collection of filters
+	- We use Laplacian pyramid
+	- We also use an oriented filter at each layer -> Laplacian pyramid is orientation independent 
+	- Compute the mean or maximum of each filter response over the region
+	- Textures with closer responses has similar textures
+### Bag of words representation
+Represent textures with histograms with common segments 
+# Chapter 7: Color
+## Color Matching Experiments
+Some one looks at a wavelength of the light and see the combination of the three primary lights until they are the same
+- We say a “negative” amount of light was needed to make a match because we added it to the test color side
+## Color Spaces
+- RGB
+	- Some colours can be matched only subtractively 
+
+- CIE XYZ
+	- Colourmatching functions are positive everywhere, but primaries are imaginary.  Overall brightness are ignored
+	- White is in the center, with saturation increasing towards the boundary 
+	- Mixing two coloured lights creates colours on a straight line 
+	- Mixing 3 colours creates colours within a triangle 
+	- Curved edge means there are no 3 actual lights that can create all colours that humans perceive! 
+	- RGB Color space is subset of CIE Color Space
+
+- Uniform Colour Spaces
+	- Differences in coordinates are a good guide to differences in perceived colour
+- HSV Color Space
+The coordinates in the regular color space like RGB and CIE might not capture the human intuitions about the color topology.
+# Chapter 8: Local Features
+##  Invariant Local Features
+- Advantage:
+	- Locality: Robust to occlusion and clutter 
+	- Distinctiveness: individual features can be matched to a large database of objects 
+	- Quantity: many features can be generated for even small objects 
+	- Efficiency: Close to realtime performance
+
+## Scale Invariant Feature Transform (SIFT)
+1. Multi-scale Extrema Detection
+2. Keypoint Localization: Remove the points with poor localization and contrast
+3. Orientation Assignment: Create a histogram with local local gradient directions computed at selected scale. Assign canonical orientation at peak of smoothed histogram 
+4. Keypoint Description: assign a location, scale, and orientation to each key point. 
+	- For SIFT: 8 orientations × 4 ×4 histogram array 
+	- Normalized to unit length
+
+## HOG features
+- Not rotationally invariant
+
+# Chapter9: Object recognition With SIFT
+- Match features, discard features that do not have any good match 
+## Transformations
+- Translation: D.O.F: 2
+- Euclidian: D.O.F.: 3
+- Similarity: D.O.D: 4
+- Affine: D.O.F: 6
+- Perspective: D.O.F: 8
+To calculate the transformations, we need to have correct matches
+## RANSAC
+1. Randomly choose minimal subset of data points necessary to fit model 
+2. Points within some distance threshold, t, of model are a consensus set. The size of the consensus set is the model’s support
+3. Repeat for N samples; the model with biggest support is the most robust fit 
+
+The probability of all the sample will fail is $(1-w^n)^k$ Where w is the fraction of inliers, n is the minimum points needed for the model, and k samples are chosen.
+
+### Advantages:
+- General method suited for a wide range of model fitting problems 
+- Easy to implement and easy to calculate its failure rate 
+### Disadvantage
+- Only handles a moderate percentage of outliers without cost blowing up 
+- any real problems have high rate of outliers (but sometimes selective choice of random subsets can help) 
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
 
  
 	
