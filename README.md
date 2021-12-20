@@ -370,11 +370,11 @@ I_{x_2} u + I_{y_2} v = -I_{t_2} $
 Considering all n points in the window, we have 
 
 $\mathbf{A} = \left[ \begin{array}{cc}
-I_{x_1} & I_{y_1} \\I_{x_2} & I_{y_2} \\
-\vdots  & \vdots  \\I_{x_n} & I_{y_n} 
+I_{x_1} & I_{y_1} \\ I_{x_2} & I_{y_2} \\
+\vdots  & \vdots  \\ I_{x_n} & I_{y_n} 
 \end{array} \right] \\\\
 \mathbf{b} = -\left[ \begin{array}{c}
-I_{t_1} \\I_{t_2} \\\vdots \\I_{t_n} 
+I_{t_1} \\ I_{t_2} \\\vdots \\ I_{t_n} 
 \end{array} \right]$
 
 We can Solve [u,v] by calculating:
