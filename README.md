@@ -277,26 +277,114 @@ The probability of all the sample will fail is $(1-w^n)^k$ Where w is the fracti
 - Only handles a moderate percentage of outliers without cost blowing up 
 - any real problems have high rate of outliers (but sometimes selective choice of random subsets can help) 
 
+## Hough Transform
+- Each token vote for all models to which the token belong
+- Return models that gets many votes
+- Somewhat robust to noise, very resistant to clutter
 
+### Hough Transform for Lines
+- Each point votes for the lines that pass through it
+- $x \sin \theta -y \cos \theta + r = 0$
+- For any $(x,y)$ there is a one parameter family of lines through this point. Just let $(x,y)$ be constants and for each value of $\theta$ the value of $r$ will be determined 
+- If there is a line that has lots of votes, that will be the line passing near the points 
+that voted for it 
 
+### Advantage
+- Can handle high percentage of outliers: each point votes separately
+- Can detect multiple instances of a model in a single pass 
 
+### Disadvantage
+- Complexity of search time increases exponentially with the number of model parameters
+- Can be tricky to pick a good bin size 
 
+## RANSAC vs. Hough Transform
+- Hough is better with large number of outliers
+- Setting bin size to account for certain level of noise is more difficult in Hough
+- RANSAC better for high dimensional parameter spaces
 
+# Chapter 10: Stereo
+## Rectification
+Reproject image planes onto a common plane parallel to the line between camera centers
 
+## Depth Estimate
+With the difference of the place of a point in the image, we can estimate the depth base on teh difference. As Z gies to infinity, the d goes to 0.
 
+- $\frac{X}{Z} = \frac{x}{f}$
+- $\frac{b-X}{Z} = \frac{x'}{f}$
+- $d = x - x' = \frac{bf}Z$
 
+$b$ is the base line. f is the focal length. Z is the depth. d if the difference between the points position on image.
 
+The depth resolution depends on b and f and pixel size.
 
- 
+## Stereo Alforithm
+1. Rectify images 
+2. Foe each pixel, 
+    1. find epipolar line
+    2. Scan line for best match
+    3. Compute depth from disparity
 
+- To find the best match, we use 
+    - Sum of Squared (Pixel) Differences 
+        - Correlation tends to fail in smooth, featureless regions 
+    - Edges
+        - are more “meaningful” but hard to find
+        - Tend to fail in dense texture
 
+### Window size
+- Smaller window is easy to match. -> More detail, but more Noise
+- bigger window more reliable, works well when smooth disparity change
 
+### Three camera Stereo (Triclops)
+Solves the ambiguity where the pattern on the scene is horizontal stripes or repetitive.
 
+# Chater 11: Optical Flow
+## Motion and Optical Flow
+- Motion is geometric 
+- Optical flow is radiometric
+- moving light source(s), lights going on/off, inter-reflection, shadows (Optical flow but no motion)
+- spinning sphere (motion but no optical flow)
 
+## Aperture Problem
+Without distinct features to track, the true visual motion is ambiguous.
 
+For edges, only normal direction is detected, but not in tengent direction.
 
+## Optical flow Constraint Equation
+Consider image intensity also to be a function of time, $t$. We write $I(x,y,t)$
+- $\frac{d I(x,y,t)}{dt} = I_x \frac{dx}{dt} +  I_y \frac{dy}{dt} + I_t$
 
+Define $u = \frac{dx}{dt}$ and $v=\frac{dy}{dt}$, Then [u,v] is the 2-D motion in space such that u and v is the 2D velocity space.
 
+## Lucas-Kanade
+- The 2-D motion [u,v] at a given point, [x,y], has two degrees-of-freedom 
+- The partial derivatives, $I_x, I_y, I_t$,provide one constraint 
+- The 2-D motion, [u,v] , cannot be determined locally from $I_x, I_y, I_t$ alone 
+
+So we need additional constraint to calculate the partial derivative. 
+- nearby pixels will likely have same optical flow
+
+$I_{x_1} u + I_{y_1} v = -I_{t_1} \\
+I_{x_2} u + I_{y_2} v = -I_{t_2} $
+
+Considering all n points in the window, we have 
+
+$\mathbf{A} = \left[ \begin{array}{cc}
+I_{x_1} & I_{y_1} \\I_{x_2} & I_{y_2} \\
+\vdots  & \vdots  \\I_{x_n} & I_{y_n} 
+\end{array} \right] \\\\
+\mathbf{b} = -\left[ \begin{array}{c}
+I_{t_1} \\I_{t_2} \\\vdots \\I_{t_n} 
+\end{array} \right]$
+
+We can Solve [u,v] by calculating:
+$(A^TA)^{-1}A^Tb$ where $\mathbf{A}^T\mathbf{A}=
+\left[
+\begin{array}{cc}
+\sum I_x^2 & \sum I_x I_y \\
+\sum I_x I_y & I_y^2
+\end{array}
+\right]$
 
 
  
